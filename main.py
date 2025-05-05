@@ -1,6 +1,8 @@
 import streamlit as st
-import openai
 from googleapiclient.discovery import build
+from openai import OpenAI
+from youtube_api import get_video_info
+from prompt_generator import generate_prompt, get_ai_response
 
 # Configurações iniciais
 st.set_page_config(page_title="YouTube AI Generator", layout="wide")
@@ -9,7 +11,7 @@ st.write("Este app usa a API do YouTube + OpenAI para gerar títulos e descriç�
 
 # Pega a chave da API do YouTube e da OpenAI via st.secrets
 YOUTUBE_API_KEY = st.secrets["youtube"]["api_key"]
-openai.api_key = st.secrets["openai"]["api_key"]
+openai_client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 # Função para buscar dados do vídeo no YouTube
 def get_video_info(youtube_url):
@@ -25,22 +27,6 @@ def get_video_info(youtube_url):
         "description": item["description"],
         "tags": item.get("tags", [])
     }
-
-# Gera o prompt com base nas informações coletadas
-def generate_prompt(video_info, publico_alvo, objetivo):
-    prompt = f"""Você é um especialista em marketing e YouTube.
-Crie um título e uma descrição otimizados para o seguinte vídeo:
-
-Título original: {video_info['title']}
-Descrição original: {video_info['description'][:500]}...
-Tags: {', '.join(video_info['tags'])}
-
-Público-alvo: {publico_alvo}
-Objetivo do vídeo: {objetivo}
-
-Gere um novo título e uma descrição melhores para esse vídeo.
-"""
-    return prompt
 
 # Interface do usuário
 with st.form("youtube_form"):
@@ -59,7 +45,7 @@ if submitted:
         # Chamada à OpenAI
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                response = openai.Completion.create(
+                response = openai_client.completions.create(
                     model="gpt-4",
                     prompt=prompt,
                     max_tokens=500,
