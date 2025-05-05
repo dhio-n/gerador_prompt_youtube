@@ -31,4 +31,3 @@ def get_video_info(api_key, video_url):
                 "description": snippet.get("description", "")
             }
     return {"title": "", "description": ""}
-
