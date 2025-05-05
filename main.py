@@ -2,7 +2,7 @@ import streamlit as st
 from googleapiclient.discovery import build
 import openai
 from youtube_api import get_video_info
-from prompt_generator import generate_prompt, get_ai_response
+from prompt_generator import generate_prompt
 
 # Configurações iniciais
 st.set_page_config(page_title="YouTube AI Generator", layout="wide")
@@ -42,19 +42,16 @@ if submitted:
     else:
         prompt = generate_prompt(video_info, publico_alvo, objetivo)
 
-        # Chamada à OpenAI (usando o método correto para chat)
+        # Chamada à OpenAI (usando o método correto para a nova versão)
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                response = openai.ChatCompletion.create(
+                response = openai.completions.create(
                     model="gpt-4",  # Ou o modelo que você estiver utilizando
-                    messages=[
-                        {"role": "system", "content": "Você é um especialista em marketing e YouTube."},
-                        {"role": "user", "content": prompt}
-                    ],
+                    prompt=prompt,
                     max_tokens=500,
                     temperature=0.7
                 )
-                resultado = response['choices'][0]['message']['content'].strip()
+                resultado = response['choices'][0]['text'].strip()
                 st.text_area("📝 Resultado Gerado pela IA:", resultado, height=300)
             except Exception as e:
                 st.error(f"Erro ao chamar a OpenAI: {e}")
