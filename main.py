@@ -42,12 +42,12 @@ if submitted:
     else:
         prompt = generate_prompt(video_info, publico_alvo, objetivo)
 
-        # Chamada à OpenAI (usando a versão correta)
+        # Chamada à OpenAI para completions (corrigido)
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                # Chamada ao novo endpoint da OpenAI
+                # Usando o novo método de completions da OpenAI
                 response = openai.Completion.create(
-                    model="gpt-4",  # Modelo GPT-4 ou o modelo de sua escolha
+                    model="gpt-4",  # Modelo GPT-4 ou outro de sua escolha
                     prompt=prompt,
                     max_tokens=500,
                     temperature=0.7
