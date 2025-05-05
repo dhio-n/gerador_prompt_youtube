@@ -42,16 +42,19 @@ if submitted:
     else:
         prompt = generate_prompt(video_info, publico_alvo, objetivo)
 
-        # Chamada à OpenAI (usando o método correto para a nova versão)
+        # Chamada à OpenAI (usando o endpoint correto para chat completions)
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                response = openai.completions.create(
-                    model="gpt-4",  # Ou o modelo que você estiver utilizando
-                    prompt=prompt,
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",  # Ou outro modelo de chat que você estiver usando
+                    messages=[
+                        {"role": "system", "content": "Você é um especialista em marketing e YouTube."},
+                        {"role": "user", "content": prompt}
+                    ],
                     max_tokens=500,
                     temperature=0.7
                 )
-                resultado = response['choices'][0]['text'].strip()
+                resultado = response['choices'][0]['message']['content'].strip()
                 st.text_area("📝 Resultado Gerado pela IA:", resultado, height=300)
             except Exception as e:
                 st.error(f"Erro ao chamar a OpenAI: {e}")
