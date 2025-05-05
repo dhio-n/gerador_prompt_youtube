@@ -1,4 +1,3 @@
-
 import streamlit as st
 import openai
 from googleapiclient.discovery import build
@@ -60,16 +59,13 @@ if submitted:
         # Chamada à OpenAI
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                response = openai.ChatCompletion.create(
+                response = openai.Completion.create(
                     model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": "Você é um especialista em YouTube e SEO."},
-                        {"role": "user", "content": prompt}
-                    ],
+                    prompt=prompt,
                     max_tokens=500,
                     temperature=0.7
                 )
-                resultado = response.choices[0].message.content.strip()
+                resultado = response.choices[0].text.strip()
                 st.text_area("📝 Resultado Gerado pela IA:", resultado, height=300)
             except Exception as e:
                 st.error(f"Erro ao chamar a OpenAI: {e}")
