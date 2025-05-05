@@ -1,4 +1,4 @@
-from openai import OpenAI
+import openai
 
 # Função para gerar o prompt
 def generate_prompt(video_info, publico_alvo, objetivo):
@@ -22,10 +22,10 @@ def generate_prompt(video_info, publico_alvo, objetivo):
     return prompt.strip()
 
 # Função para obter resposta da IA
-def get_ai_response(prompt, openai_client):
+def get_ai_response(prompt):
     try:
-        response = openai_client.chat_completions.create(
-            model="gpt-4",
+        response = openai.ChatCompletion.create(
+            model="gpt-4",  # Ou o modelo que você estiver usando
             messages=[
                 {"role": "system", "content": "Você é um especialista em marketing e YouTube."},
                 {"role": "user", "content": prompt}
