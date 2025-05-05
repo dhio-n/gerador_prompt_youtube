@@ -1,32 +1,46 @@
 import openai
 
-# Função para gerar o prompt de roteiro
+# Função para gerar o prompt
 def generate_prompt(video_info, publico_alvo, objetivo):
     titulo = video_info.get("title", "")
-    transcricao = video_info.get("description", "")  # Considerando que aqui vem a transcrição
+    descricao = video_info.get("description", "")
 
     prompt = f"""
-    Você é um criador de conteúdo experiente no YouTube.
+    Você é um criador de conteúdo especializado em vídeos virais para YouTube Shorts e TikTok, com foco em tecnologia, mercado dev e cultura jovem.
 
-    Abaixo estão as informações de um vídeo já existente:
-    Título do vídeo: {titulo}
-    Transcrição do vídeo: {transcricao}
+    Informações do vídeo original:
+    - Título: {titulo}
+    - Descrição: {descricao}
+
     Público-alvo: {publico_alvo}
-    Objetivo: {objetivo}
+    Objetivo do vídeo: {objetivo}
 
-    Com base nessas informações, crie um novo **roteiro de vídeo original** com cerca de 1 minuto de duração, pronto para ser usado em um novo vídeo de YouTube Shorts ou TikTok.
+    Com base nessas informações, faça o seguinte:
 
+    1. Liste as regras que você usará para otimizar o conteúdo para engajamento, usando uma linguagem jovem, memes, ganchos, emojis e CTAs eficazes.
+    2. Gere um **novo título sugerido** (máx. 60 caracteres).
+    3. Gere uma **nova descrição sugerida** (com tom provocativo e divertido, incluindo CTA e emojis).
+    4. Crie um **roteiro curto (até 1 minuto)** para um vídeo estilo Shorts, com a seguinte estrutura:
+       - Gancho provocativo
+       - Desenvolvimento com storytelling rápido
+       - Revelação ou punchline
+       - Encerramento com chamada para ação
+
+    Formato de resposta:
     Regras:
-    - Use uma linguagem informal e engajante, voltada para jovens de 17 a 35 anos interessados em tecnologia, programação e cultura dev.
-    - O roteiro deve ter uma introdução chamativa (gancho), desenvolvimento objetivo e um fechamento com CTA (ex: "curte e se inscreve").
-    - Pode usar emojis, expressões populares e estilo de fala descontraído.
+    - Regra 1
+    - Regra 2
+    (...)
 
-    Formato da resposta:
-    [Introdução chamativa]
-    [Desenvolvimento com storytelling curto]
-    [Conclusão + Chamada para ação]
+    Título sugerido:
+    [Título aqui]
+
+    Descrição sugerida:
+    [Descrição aqui]
+
+    Roteiro sugerido:
+    [Roteiro com emoji, tom leve e divertido]
     """
-
     return prompt.strip()
 
 # Função para obter resposta da IA
@@ -35,11 +49,11 @@ def get_ai_response(prompt):
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "Você é um roteirista especialista em vídeos curtos e virais para o YouTube e TikTok."},
+                {"role": "system", "content": "Você é um especialista em marketing, roteiro e engajamento para vídeos curtos e virais."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=800,
-            temperature=0.7
+            max_tokens=1000,
+            temperature=0.8
         )
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
