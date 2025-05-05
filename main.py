@@ -1,6 +1,6 @@
 import streamlit as st
 from googleapiclient.discovery import build
-from openai import OpenAI
+import openai
 from youtube_api import get_video_info
 from prompt_generator import generate_prompt, get_ai_response
 
@@ -11,7 +11,7 @@ st.write("Este app usa a API do YouTube + OpenAI para gerar títulos e descriç�
 
 # Pega a chave da API do YouTube e da OpenAI via st.secrets
 YOUTUBE_API_KEY = st.secrets["youtube"]["api_key"]
-openai_client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+openai.api_key = st.secrets["openai"]["api_key"]
 
 # Função para buscar dados do vídeo no YouTube
 def get_video_info(youtube_url):
@@ -42,16 +42,19 @@ if submitted:
     else:
         prompt = generate_prompt(video_info, publico_alvo, objetivo)
 
-        # Chamada à OpenAI
+        # Chamada à OpenAI (usando o método correto para chat)
         with st.spinner("Gerando com inteligência artificial..."):
             try:
-                response = openai_client.completions.create(
-                    model="gpt-4",
-                    prompt=prompt,
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",  # Ou o modelo que você estiver utilizando
+                    messages=[
+                        {"role": "system", "content": "Você é um especialista em marketing e YouTube."},
+                        {"role": "user", "content": prompt}
+                    ],
                     max_tokens=500,
                     temperature=0.7
                 )
-                resultado = response.choices[0].text.strip()
+                resultado = response['choices'][0]['message']['content'].strip()
                 st.text_area("📝 Resultado Gerado pela IA:", resultado, height=300)
             except Exception as e:
                 st.error(f"Erro ao chamar a OpenAI: {e}")
