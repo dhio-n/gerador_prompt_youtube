@@ -4,9 +4,10 @@ from prompt_generator import generate_prompt
 
 st.title("Gerador Inteligente de Prompt para YouTube")
 
-api_key = st.text_input("🔑 Sua API Key do YouTube", type="password")
-video_url = st.text_input("📺 Cole a URL do vídeo aqui")
+# Usa a chave secreta salva no painel da Streamlit Cloud
+api_key = st.secrets["youtube"]["api_key"]
 
+video_url = st.text_input("📺 Cole a URL do vídeo aqui")
 publico_alvo = st.text_input("🎯 Público-alvo (ex: jovens gamers)")
 objetivo = st.text_area("🧠 Objetivo do conteúdo (ex: viralizar, ensinar algo...)")
 
