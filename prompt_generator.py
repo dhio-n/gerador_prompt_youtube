@@ -1,8 +1,9 @@
-import openai
+from openai import OpenAI
 
+# Função para gerar o prompt
 def generate_prompt(video_info, publico_alvo, objetivo):
-    titulo = video_info.get("titulo", "")
-    descricao = video_info.get("descricao", "")
+    titulo = video_info.get("title", "")
+    descricao = video_info.get("description", "")
 
     prompt = f"""
     Você é um especialista em criação de conteúdo viral no YouTube.
@@ -20,20 +21,16 @@ def generate_prompt(video_info, publico_alvo, objetivo):
     """
     return prompt.strip()
 
-# Chamada para a OpenAI com a nova API
-def get_ai_response(prompt):
+# Função para obter resposta da IA
+def get_ai_response(prompt, openai_client):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",  # Ou outro modelo que você esteja utilizando
-            messages=[
-                {"role": "system", "content": "Você é um especialista em marketing e YouTube."},
-                {"role": "user", "content": prompt}
-            ],
+        response = openai_client.completions.create(
+            model="gpt-4",
+            prompt=prompt,
             max_tokens=500,
             temperature=0.7
         )
-        resultado = response['choices'][0]['message']['content'].strip()
-        return resultado
+        return response.choices[0].text.strip()
     except Exception as e:
         print(f"Erro ao chamar a OpenAI: {e}")
         return None
